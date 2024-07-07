@@ -27,10 +27,4 @@ public class TeachplanMapperTest {
         List<TeachplanDto> teachplanDtos = teachplanMapper.selectTreeNodes(117L);
         System.out.println(teachplanDtos);
     }
-
-    @Test
-    void selectMax() {
-        Integer i = teachplanMapper.selectMax(117L, 268L);
-        System.out.println(i);
-    }
 }
