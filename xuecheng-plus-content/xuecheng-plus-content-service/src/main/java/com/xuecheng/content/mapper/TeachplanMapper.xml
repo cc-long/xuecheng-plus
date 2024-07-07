@@ -84,7 +84,7 @@
                tm.id                teachplanMediaId,
                tm.media_id          mediaId
         from teachplan one
-                 inner join teachplan two on one.id=two.parentid
+                 left join teachplan two on one.id=two.parentid
                  left join teachplan_media tm on two.id = tm.teachplan_id
 
         where one.parentid = 0
