@@ -1,23 +1,50 @@
-server:
-  servlet:
-    context-path: /content
-  port: 63040
-#微服务配置
+#server:
+#  servlet:
+#    context-path: /content
+#  port: 63040
+#微服务配置  不能在nacos中配置
 spring:
   application:
     name: content-api
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.61.139:3306/xc_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
-    username: root
-    password: 123
+#nacos配置
+  cloud:
+    nacos:
+      server-addr: 192.168.61.139:8848
+      discovery:
+        namespace: xuecheng
+        group: xuecheng-plus
+      #配置文件的相关信息
+      config:
+        namespace: xuecheng
+        group: xuecheng-plus
+        file-extension: yaml
+        refresh-enabled: true
+        extension-configs:
+          - data-id: content-service-${spring.profiles.active}.yaml
+            group: xuecheng-plus
+            refresh: true
+        shared-configs:
+          - data-id: swagger-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+          - data-id: logging-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+  profiles:
+    # 环境名
+    active: dev
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://192.168.61.139:3306/xc_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
+#    username: root
+#    password: 123
 # 日志文件配置路径
-logging:
-  config: classpath:log4j2-dev.xml
+#logging:
+#  config: classpath:log4j2-dev.xml
 
-swagger:
-  title: "学成在线内容管理系统"
-  description: "内容系统管理系统对课程相关信息进行管理"
-  base-package: com.xuecheng.content
-  enabled: true
-  version: 1.0.0
+#swagger:
+#  title: "学成在线内容管理系统"
+#  description: "内容系统管理系统对课程相关信息进行管理"
+#  base-package: com.xuecheng.content
+#  enabled: true
+#  version: 1.0.0

@@ -10,6 +10,10 @@
     <artifactId>xuecheng-plus-content-service</artifactId>
    <dependencies>
        <dependency>
+           <groupId>com.alibaba.cloud</groupId>
+           <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+       </dependency>
+       <dependency>
            <groupId>com.xuecheng</groupId>
            <artifactId>xuecheng-plus-content-model</artifactId>
            <version>0.0.1-SNAPSHOT</version>

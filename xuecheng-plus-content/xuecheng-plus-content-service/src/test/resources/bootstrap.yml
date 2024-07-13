@@ -2,11 +2,24 @@
 spring:
   application:
     name: content-service
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.61.139:3306/xc_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
-    username: root
-    password: 123
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://192.168.61.139:3306/xc_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
+#    username: root
+#    password: 123
+
+  cloud:
+    nacos:
+      server-addr: 192.168.61.139:8848
+      config:
+        namespace: xuecheng
+        group: xuecheng-plus
+        file-extension: yaml
+        refresh-enabled: true
+
+  profiles:
+    #环境名
+    active: dev
 # 日志文件配置路径
 logging:
   config: classpath:log4j2-dev.xml
