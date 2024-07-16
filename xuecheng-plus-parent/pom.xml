@@ -7,9 +7,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>xuecheng-plus-parent</name>
     <description>xuecheng-plus-parent</description>
-    <modules>
-        <module>../xuecheng-plus-media</module>
-    </modules>
     <packaging>pom</packaging>
 
     <properties>
