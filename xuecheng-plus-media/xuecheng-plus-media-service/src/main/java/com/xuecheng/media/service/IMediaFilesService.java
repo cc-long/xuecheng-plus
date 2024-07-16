@@ -34,4 +34,16 @@ public interface IMediaFilesService {
      * @return UploadFileResultDto
      */
     UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+
+    /**
+     * addMediaFilesToDb用作代理对象
+     * 注入的bean都是代理对象
+     * @param companyId
+     * @param fileMd5
+     * @param uploadFileParamsDto
+     * @param bucket
+     * @param objectName
+     * @return
+     */
+    public MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,String bucket,String objectName);
 }

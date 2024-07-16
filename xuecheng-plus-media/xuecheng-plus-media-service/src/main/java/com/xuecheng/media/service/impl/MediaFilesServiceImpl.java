@@ -44,6 +44,10 @@ import java.util.Date;
 @Service
 public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFiles> implements IMediaFilesService {
 
+    //注入的bean都是代理对象
+    @Autowired
+    IMediaFilesService currentProxyService;
+
     @Autowired
     MediaFilesMapper mediaFilesMapper;
 
@@ -70,7 +74,6 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     @Override
-    @Transactional
     public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath) {
 
         //文件名
@@ -88,7 +91,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         if (!result)
             XueChengPlusException.cast("上传文件失败");
         //入库文件信息
-        MediaFiles mediaFiles = addMediaFilesToDb(companyId, fileMd5, uploadFileParamsDto, bucket_mediafiles, objectName);
+        MediaFiles mediaFiles = currentProxyService.addMediaFilesToDb(companyId, fileMd5, uploadFileParamsDto, bucket_mediafiles, objectName);
         //准备返回的对象
         UploadFileResultDto uploadFileResultDto = new UploadFileResultDto();
         BeanUtils.copyProperties(mediaFiles,uploadFileResultDto);
@@ -96,6 +99,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return uploadFileResultDto;
     }
 
+    @Transactional
     public MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,String bucket,String objectName){
         //将文件信息保存到数据库
         MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
