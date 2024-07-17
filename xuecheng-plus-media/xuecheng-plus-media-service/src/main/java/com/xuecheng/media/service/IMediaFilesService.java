@@ -2,6 +2,7 @@ package com.xuecheng.media.service;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
@@ -35,9 +36,19 @@ public interface IMediaFilesService {
      */
     UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
 
+
     /**
-     * addMediaFilesToDb用作代理对象
-     * 注入的bean都是代理对象
+     * 检查文件
+     * @param fileMd5 文件的md5
+     * @return
+     */
+    RestResponse<Boolean> checkFile(String fileMd5);
+
+    RestResponse<Boolean> checkChunk(String fileMd5,int chunkIndex);
+
+    /**
+     *
+     * 注入的bean都是代理对象    addMediaFilesToDb用作代理对象
      * @param companyId
      * @param fileMd5
      * @param uploadFileParamsDto

@@ -8,6 +8,7 @@ import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.mapper.MediaFilesMapper;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
@@ -15,8 +16,11 @@ import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.service.IMediaFilesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import io.minio.UploadObjectArgs;
+import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -97,6 +104,59 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         BeanUtils.copyProperties(mediaFiles,uploadFileResultDto);
 
         return uploadFileResultDto;
+    }
+
+    @Override
+    public RestResponse<Boolean> checkFile(String fileMd5) {
+        //先查询数据库
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
+
+        if (mediaFiles != null){
+            //获取参数信息
+            String bucket = mediaFiles.getBucket();
+            String filePath = mediaFiles.getFilePath();
+            //如果数据库存在再查询 minio
+            GetObjectArgs getObjectArgs = GetObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(filePath)
+                    .build();
+            //查询远程服务获取到一个流对象
+            try {
+                GetObjectResponse inputStream = minioClient.getObject(getObjectArgs);
+                if (inputStream != null){
+                    //文件已存在
+                    return RestResponse.success(true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        //文件不存在
+        return RestResponse.success(false);
+    }
+
+    @Override
+    public RestResponse<Boolean> checkChunk(String fileMd5, int chunkIndex) {
+
+        String chunkFileFolderPath = getChunkFileFolderPath(fileMd5) + chunkIndex;
+
+        //如果数据库存在再查询 minio
+            GetObjectArgs getObjectArgs = GetObjectArgs.builder()
+                    .bucket("video")
+                    .object(chunkFileFolderPath)
+                    .build();
+            //查询远程服务获取到一个流对象
+            try {
+                GetObjectResponse inputStream = minioClient.getObject(getObjectArgs);
+                if (inputStream != null){
+                    //文件已存在
+                    return RestResponse.success(true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        //文件不存在
+        return RestResponse.success(false);
     }
 
     @Transactional
@@ -194,5 +254,10 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
             e.printStackTrace();
             return null;
         }
+    }
+
+    //根据文件md5 生成文件路径
+    private String getChunkFileFolderPath(String fileMd5){
+        return fileMd5.substring(0,1) + "/" + fileMd5.substring(1,2) + "/" + fileMd5 + "/" + "chunk" + "/";
     }
 }

@@ -3,12 +3,20 @@ package com.xuecheng.media;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import io.minio.*;
+import io.minio.errors.*;
+import io.minio.messages.Item;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
+import javax.xml.transform.Source;
 import java.io.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author CCL
@@ -97,17 +105,52 @@ public class MinioTest {
     @Test
     public void upload_chunk() throws Exception {
 
-        for (int i=0;i<27;i++) {
+        for (int i=0;i<326;i++) {
             minioClient.uploadObject(
                     UploadObjectArgs.builder()
                             .bucket("testbucket")
                             //指定本地文件
-                            .filename("D:\\迅雷下载\\beaf-083\\chunk\\" + i)
+                            .filename("D:\\迅雷下载\\beaf-083\\CAWD-520\\" + i)
                             //确定对象名
-                            .object("chunk/" + i)
+                            .object("CAWD-520/" + i)
                             .build()
             );
             System.out.println("上传分块" + i + "成功");
         }
+    }
+
+    //调用minio接口合并分块
+    @Test
+    public void testMerge() throws Exception {
+
+//        List<ComposeSource> sources = null;
+
+//        for (int i=0; i<27;i++) {
+//            //指定分块文件的信息
+//            ComposeSource source = ComposeSource.builder()
+//                    .bucket("testbucket")
+//                    .object("chunk/" + i)
+//                    .build();
+//            sources.add(source);
+//        }
+
+        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(27).map(i ->
+                ComposeSource.builder()
+                        .bucket("testbucket")
+                        .object("CAWD-520/" + i)
+                        .build()
+        ).collect(Collectors.toList());
+
+        //指定合并后端objectName等信息
+        ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder()
+                .bucket("testbucket")
+                .object("CAWD-520.mp4")
+                .sources(sources)
+                .build();
+
+        //合并文件,
+        //minio默认的分块文件大小为5M
+        minioClient.composeObject(composeObjectArgs);
+
     }
 }
