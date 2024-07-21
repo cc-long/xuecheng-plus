@@ -105,14 +105,14 @@ public class MinioTest {
     @Test
     public void upload_chunk() throws Exception {
 
-        for (int i=0;i<326;i++) {
+        for (int i=0;i<76;i++) {
             minioClient.uploadObject(
                     UploadObjectArgs.builder()
                             .bucket("testbucket")
                             //指定本地文件
-                            .filename("D:\\迅雷下载\\beaf-083\\CAWD-520\\" + i)
+                            .filename("D:\\迅雷下载\\beaf-083\\国民的美少女\\" + i)
                             //确定对象名
-                            .object("CAWD-520/" + i)
+                            .object("国民的美少女/" + i)
                             .build()
             );
             System.out.println("上传分块" + i + "成功");
@@ -134,17 +134,17 @@ public class MinioTest {
 //            sources.add(source);
 //        }
 
-        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(27).map(i ->
+        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(76).map(i ->
                 ComposeSource.builder()
                         .bucket("testbucket")
-                        .object("CAWD-520/" + i)
+                        .object("国民的美少女/" + i)
                         .build()
         ).collect(Collectors.toList());
 
         //指定合并后端objectName等信息
         ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder()
                 .bucket("testbucket")
-                .object("CAWD-520.mp4")
+                .object("国民的美少女.ts")
                 .sources(sources)
                 .build();
 

@@ -22,9 +22,9 @@ public class BigFileTest {
     @Test
     public void testChunk() throws IOException {
         //先找到原文件
-        File sourseFile = new File("D:\\迅雷下载\\beaf-083\\CAWD-520 中年教師のボクは大人しい文学少女に簡単に童貞を奪われアナル開発で変態ドMに覚醒させられ厳しい.mp4");
+        File sourseFile = new File("D:\\迅雷下载\\beaf-083\\国民的美少女（沖縄タレント激似）コスプレ大好きッ子！清純アイドル顔！の中出しセ - Pornhub.com.ts");
         //分块文件存储路径
-        String chunkPath = "D:\\迅雷下载\\beaf-083\\CAWD-520 中年教師のボクは大人しい文学少女に簡単に童貞を奪われアナル開発で変態ドMに覚醒させられ厳しい\\";
+        String chunkPath = "D:\\迅雷下载\\beaf-083\\国民的美少女\\";
         //分块文件大小
         int chunkSize = 1024 * 1024 * 5;
         //分块文件的个数

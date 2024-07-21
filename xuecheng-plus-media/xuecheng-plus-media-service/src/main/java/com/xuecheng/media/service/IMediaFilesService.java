@@ -38,13 +38,39 @@ public interface IMediaFilesService {
 
 
     /**
-     * 检查文件
+     * 检查文件是否存在
      * @param fileMd5 文件的md5
      * @return
      */
     RestResponse<Boolean> checkFile(String fileMd5);
 
+
+    /**
+     * 检查分块文件是否存在
+     * @param fileMd5 分块文件的md5值
+     * @param chunkIndex 分块的索引
+     * @return
+     */
     RestResponse<Boolean> checkChunk(String fileMd5,int chunkIndex);
+
+    /**
+     * 上传分块文件
+     * @param fileMd5 分块文件md5
+     * @param chunk 分块号
+     * @param localChunkFilePath  本地文件路径
+     * @return
+     */
+    RestResponse uploadChunk(String fileMd5,int chunk,String localChunkFilePath);
+
+    /**
+     * 合并分块文件
+     * @param companyId 机构id
+     * @param fileMd5 文件md5
+     * @param chunkTotal 分块总数
+     * @param uploadFileParamsDto 文件信息
+     * @return
+     */
+    public RestResponse mergeChunks(Long companyId,String fileMd5,int chunkTotal,UploadFileParamsDto uploadFileParamsDto);
 
     /**
      *
