@@ -23,7 +23,7 @@ public interface IMediaProcessService extends IService<MediaProcess> {
      * @param id 任务id
      * @return 更新记录数
      */
-    int startTask(long id);
+    boolean startTask(long id);
 
     /**
      * 保存任务结果

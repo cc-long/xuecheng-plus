@@ -424,7 +424,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
 
     //根据扩展名获取mimeType
-    private String getMimeType(String extension){
+    public String getMimeType(String extension){
         if (extension == null)
             extension = "";
         ContentInfo extensionMatch = ContentInfoUtil.findExtensionMatch(extension);

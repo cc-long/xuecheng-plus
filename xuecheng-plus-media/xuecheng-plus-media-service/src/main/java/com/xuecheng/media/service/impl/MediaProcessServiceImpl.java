@@ -42,8 +42,9 @@ public class MediaProcessServiceImpl extends ServiceImpl<MediaProcessMapper, Med
     }
 
     @Override
-    public int startTask(long id) {
-        return mediaProcessMapper.startTask(id);
+    public boolean startTask(long id) {
+        int result = mediaProcessMapper.startTask(id);
+        return result<=0 ? false : true;
     }
 
     @Override

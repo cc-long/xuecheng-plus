@@ -8,6 +8,7 @@ import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 
+import java.io.File;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -86,4 +87,23 @@ public interface IMediaFilesService {
      * @return
      */
     public MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,String bucket,String objectName);
+
+    /**
+     *      从minio 下载文件
+     * @param bucket
+     * @param objectName
+     * @return
+     */
+    public File downloadFileFormMinIO(String bucket, String objectName);
+
+    /**
+     *
+     * @param bucket 桶目录
+     * @param localFilePath 本地文件路径
+     * @return
+     */
+    public boolean addMediaFilesToMinIO(String localFilePath,String mimeType,String bucket, String objectName);
+
+    //根据扩展名获取mimeType
+    public String getMimeType(String extension);
 }
