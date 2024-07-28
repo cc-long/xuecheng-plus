@@ -8,6 +8,9 @@ import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 
 /**
  * <p>
@@ -70,7 +73,7 @@ public interface IMediaFilesService {
      * @param uploadFileParamsDto 文件信息
      * @return
      */
-    public RestResponse mergeChunks(Long companyId,String fileMd5,int chunkTotal,UploadFileParamsDto uploadFileParamsDto);
+    public RestResponse mergeChunks(Long companyId,String fileMd5,int chunkTotal,UploadFileParamsDto uploadFileParamsDto) throws NoSuchAlgorithmException, InvalidKeyException;
 
     /**
      *

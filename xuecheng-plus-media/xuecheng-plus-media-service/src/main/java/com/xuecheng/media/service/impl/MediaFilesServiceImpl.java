@@ -10,10 +10,12 @@ import com.xuecheng.base.model.PageResult;
 
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.mapper.MediaFilesMapper;
+import com.xuecheng.media.mapper.MediaProcessMapper;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
+import com.xuecheng.media.model.po.MediaProcess;
 import com.xuecheng.media.service.IMediaFilesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.minio.*;
@@ -30,10 +32,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -64,6 +65,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
     @Autowired
     MinioClient minioClient;
+
+    @Autowired
+    private MediaProcessMapper mediaProcessMapper;
 
     //存储普通文件的桶
     @Value("${minio.bucket.files}")
@@ -104,6 +108,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                 GetObjectResponse inputStream = minioClient.getObject(getObjectArgs);
                 if (inputStream != null){
                     //文件已存在
+                    inputStream.close();
                     return RestResponse.success(true);
                 }
             } catch (Exception e) {
@@ -131,6 +136,8 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                 GetObjectResponse inputStream = minioClient.getObject(getObjectArgs);
                 if (inputStream != null){
                     //文件已存在
+                    //关闭minio流
+                    inputStream.close();
                     return RestResponse.success(true);
                 }
             } catch (Exception e) {
@@ -201,13 +208,19 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     @Override
-    public RestResponse mergeChunks(Long companyId, String fileMd5, int chunkTotal, UploadFileParamsDto uploadFileParamsDto) {
+    public RestResponse mergeChunks(Long companyId, String fileMd5, int chunkTotal, UploadFileParamsDto uploadFileParamsDto) throws NoSuchAlgorithmException, InvalidKeyException {
         String chunkFileFolderPath = getChunkFileFolderPath(fileMd5);
+//        ServerSideEncryptionCustomerKey srcSsec =
+//                new ServerSideEncryptionCustomerKey(
+//                        new SecretKeySpec(
+//                                "01234567890123456789012345678901".getBytes(StandardCharsets.UTF_8), "AES"));
+
         //找到分块文件调用minio进行文件合并
         List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(chunkTotal).map(i ->
                 ComposeSource.builder()
                         .bucket(bucket_video)
                         .object(chunkFileFolderPath + i)
+//                        .ssec(srcSsec)
                         .build()
         ).collect(Collectors.toList());
 
@@ -221,20 +234,26 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
         try {
             //=========================合并文件,
-            GetObjectResponse getObjectResponse = minioClient.getObject(GetObjectArgs.builder()
-                            .bucket(bucket_video)
-                            .object(objectName)
-                    .build());
-            if (getObjectResponse == null) {
-                //指定合并后端objectName等信息
+//            GetObjectResponse getObjectResponse = minioClient.getObject(GetObjectArgs.builder()
+//                            .bucket(bucket_video)
+//                            .object(objectName)
+//                    .build());
+//            if (getObjectResponse == null) {
+//                指定合并后端objectName等信息
+
+//            ServerSideEncryption sse =
+//                    new ServerSideEncryptionCustomerKey(
+//                            new SecretKeySpec(
+//                                    "12345678912345678912345678912345".getBytes(StandardCharsets.UTF_8), "AES"));
                 ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder()
                         .bucket(bucket_video)
                         .object(objectName) //最终合并后的文件
                         .sources(sources)
+//                        .sse(sse)
                         .build();
                 //minio默认的分块文件大小为5M
                 minioClient.composeObject(composeObjectArgs);
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("合并文件出错，bucket：{}，objectName：{}，错误信息：{}",bucket_video,objectName,e.getMessage());
@@ -395,6 +414,10 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                 log.debug("向数据库保存文件失败，bucket:{},objectName:{}",bucket,objectName);
                 return null;
             }
+            //记录待处理任务
+            //通过mimeType 判断如果是avi视频写入带处理任务
+            addWaitingTask(mediaFiles);
+            //向MediaProcess 插入记录
         }
         return mediaFiles;
     }
@@ -439,4 +462,28 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     private String getFilePathByMd5(String fileMd5,String fileExt){
         return fileMd5.substring(0,1) + "/" + fileMd5.substring(1,2) + "/" + fileMd5 + "/" + fileMd5 + fileExt;
     }
+
+    /**
+     * 添加待处理任务
+     * @param mediaFiles 媒资文件信息
+     */
+    private void addWaitingTask(MediaFiles mediaFiles){
+        //获取文件的mimeType
+        String filename = mediaFiles.getFilename();
+        String extension = filename.substring(filename.lastIndexOf("."));
+        String mimeType = getMimeType(extension);
+
+        if (mimeType.equals("video/x-msvideo")){
+            MediaProcess mediaProcess = new MediaProcess();
+            BeanUtils.copyProperties(mediaFiles,mediaProcess);
+            //状态是未处理
+            mediaProcess.setStatus("1");//1是未处理
+            mediaProcess.setCreateDate(LocalDateTime.now());
+            mediaProcess.setFailCount(0);//失败次数
+            mediaProcessMapper.insert(mediaProcess);
+        }
+
+        //通过mimeType判断如果是avi 视频写入待处理任务
+    }
+
 }
