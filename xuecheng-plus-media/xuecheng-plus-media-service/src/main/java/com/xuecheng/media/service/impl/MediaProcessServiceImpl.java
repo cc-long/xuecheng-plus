@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,6 +49,7 @@ public class MediaProcessServiceImpl extends ServiceImpl<MediaProcessMapper, Med
     }
 
     @Override
+    @Transactional
     public void saveProcessFinishStatus(Long taskId, String status, String fileId, String url, String errorMsg) {
 
         //要更新的任务

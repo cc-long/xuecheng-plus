@@ -104,6 +104,4 @@ public interface IMediaFilesService {
      */
     public boolean addMediaFilesToMinIO(String localFilePath,String mimeType,String bucket, String objectName);
 
-    //根据扩展名获取mimeType
-    public String getMimeType(String extension);
 }
