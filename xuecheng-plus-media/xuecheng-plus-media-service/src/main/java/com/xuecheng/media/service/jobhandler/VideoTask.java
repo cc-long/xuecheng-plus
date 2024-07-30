@@ -126,9 +126,9 @@ public class VideoTask {
                     }
 
 
-                    String url = getFilePathByMd5(fileId, ".mp4");
+                    String filePath = getFilePathByMd5(fileId, ".mp4");
                     //上传到minio
-                    boolean b1 = mediaFilesService.addMediaFilesToMinIO(mp4Path, "video/mp4", bucket, url);
+                    boolean b1 = mediaFilesService.addMediaFilesToMinIO(mp4Path, "video/mp4", bucket, filePath);
                     if (!b1){
                         log.debug("上传mp4到minio失败，taskId：{}",taskId);
                         //保存任务处理失败的结果
@@ -136,7 +136,7 @@ public class VideoTask {
                     }
 
                     //更新任务状态为成功
-
+                    String url = "/" + bucket + "/" + filePath;
                     mediaProcessService.saveProcessFinishStatus(taskId,"2",fileId,url,result);
                 } finally {
 

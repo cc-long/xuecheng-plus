@@ -1,7 +1,9 @@
 package com.xuecheng.content.api;
 
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.SaveTeachPlanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
+import com.xuecheng.content.model.po.TeachplanMedia;
 import com.xuecheng.content.service.TeachplanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -45,5 +47,11 @@ public class TeachplanController {
     @Transactional
     public void deleteCourseBase(@PathVariable Long teachplanId) {
         teachplanService.deleteCourseBase(teachplanId);
+    }
+
+    @ApiOperation("课程计划与媒资信息绑定")
+    @PostMapping("/teachplan/association/media")
+    public TeachplanMedia associationMedia(@RequestBody BindTeachplanMediaDto bindTeachplanMediaDto){
+        return teachplanService.associationMedia(bindTeachplanMediaDto);
     }
 }
