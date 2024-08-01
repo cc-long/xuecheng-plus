@@ -9,6 +9,13 @@
     </parent>
     <artifactId>xuecheng-plus-content-api</artifactId>
     <dependencies>
+
+<!--        Spring Boot 对结果视图 Freemarker 集成-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.xuecheng</groupId>
             <artifactId>xuecheng-plus-content-service</artifactId>
