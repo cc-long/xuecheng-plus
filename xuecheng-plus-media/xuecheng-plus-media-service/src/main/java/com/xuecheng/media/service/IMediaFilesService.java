@@ -22,6 +22,14 @@ import java.security.NoSuchAlgorithmException;
  * @since 2024-07-13
  */
 public interface IMediaFilesService {
+
+    /**
+     * 更具媒资id 查询文件信息
+     * @param mediaId
+     * @return
+     */
+    MediaFiles getFileById(String mediaId);
+
     /**
      * 媒体资源列表
      * @param companyId

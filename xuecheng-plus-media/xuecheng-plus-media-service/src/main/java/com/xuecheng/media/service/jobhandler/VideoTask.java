@@ -135,6 +135,8 @@ public class VideoTask {
                         mediaProcessService.saveProcessFinishStatus(taskId,"3",fileId,null,result);
                     }
 
+
+
                     //更新任务状态为成功
                     String url = "/" + bucket + "/" + filePath;
                     mediaProcessService.saveProcessFinishStatus(taskId,"2",fileId,url,result);

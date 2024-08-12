@@ -74,6 +74,8 @@ public class MediaProcessServiceImpl extends ServiceImpl<MediaProcessMapper, Med
 
         //更新mediaFile表 的url字段
         mediaFiles.setUrl(url);
+//        mediaFiles.setFilename()
+//        mediaFiles.setFilePath("/" + fileId.substring(0,1) + "/" + fileId.substring(1,2) + "/" + fileId + "/" + fileId + ".mp4");
         mediaFilesMapper.updateById(mediaFiles);
 
         //更新mediaProcess 表的状态

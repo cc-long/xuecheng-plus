@@ -76,6 +76,13 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     //存储视频文件的桶
     @Value("${minio.bucket.videofiles}")
     private String bucket_video;
+
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(mediaId);
+        return mediaFiles;
+    }
+
     @Override
     public PageResult<MediaFiles> queryMediaFiles(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto) {
         LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<>();
