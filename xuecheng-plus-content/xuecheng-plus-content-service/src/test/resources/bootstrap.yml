@@ -2,11 +2,6 @@
 spring:
   application:
     name: content-service
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://192.168.61.139:3306/xc_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
-#    username: root
-#    password: 123
 
   cloud:
     nacos:
@@ -16,6 +11,10 @@ spring:
         group: xuecheng-plus
         file-extension: yaml
         refresh-enabled: true
+        shared-configs:
+          - data-id: feign-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
 
   profiles:
     #环境名

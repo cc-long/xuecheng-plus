@@ -44,9 +44,10 @@ public interface IMediaFilesService {
      * @param companyId 机构id
      * @param uploadFileParamsDto 文件信息
      * @param localFilePath 文件本地路径
+     * @param objectName  如果传入objectName 要按照objectName的目录去存储，如果不传就按照年月日目录结构 （上传html模板）
      * @return UploadFileResultDto
      */
-    UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+    UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath, String objectName);
 
 
     /**
