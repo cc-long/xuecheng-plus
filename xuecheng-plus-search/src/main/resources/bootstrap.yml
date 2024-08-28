@@ -1,8 +1,6 @@
-#微服务配置
 spring:
   application:
-    name: content-service
-
+    name: search
   cloud:
     nacos:
       server-addr: 192.168.61.139:8848
@@ -15,14 +13,12 @@ spring:
         file-extension: yaml
         refresh-enabled: true
         shared-configs:
-          - data-id: feign-${spring.profiles.active}.yaml
+          - data-id: swagger-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+          - data-id: logging-${spring.profiles.active}.yaml
             group: xuecheng-plus-common
             refresh: true
 
   profiles:
-    #环境名
     active: dev
-# 日志文件配置路径
-logging:
-  config: classpath:log4j2-dev.xml
-
