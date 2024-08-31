@@ -135,6 +135,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         //从数据库查询课程的详细信息，包括两部分
         CourseBaseInfoDto courseBaseInfo = getCourseBaseInfo(courseId);
 
+
         return courseBaseInfo;
     }
 
