@@ -32,20 +32,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     //配置用户信息服务
-    @Bean
-    public UserDetailsService userDetailsService() {
-        //这里配置用户信息,这里暂时使用这种方式将用户存储在内存中
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("zhangsan").password("123").authorities("p1").build());
-        manager.createUser(User.withUsername("lisi").password("456").authorities("p2").build());
-        return manager;
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        //这里配置用户信息,这里暂时使用这种方式将用户存储在内存中
+//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+//        manager.createUser(User.withUsername("zhangsan").password("123").authorities("p1").build());
+//        manager.createUser(User.withUsername("lisi").password("456").authorities("p2").build());
+//        return manager;
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
 //        //密码为明文方式
-        return NoOpPasswordEncoder.getInstance();
-//        return new BCryptPasswordEncoder();
+//        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * 注入自己重写的DaoAuthenticationProvider，并且告诉框架自己重写的DaoAuthenticationProviderCustom
+     */
+    @Autowired
+    private DaoAuthenticationProviderCustom daoAuthenticationProviderCustom;
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProviderCustom);
     }
 
     //配置安全拦截机制
