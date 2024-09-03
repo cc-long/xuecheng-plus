@@ -1,0 +1,6 @@
+### 申请验证码
+POST {{checkcode_host}}/checkcode/pic
+
+
+### 校验验证码
+POST {{checkcode_host}}/checkcode/verify?key=checkcode:2e550a244d1e424d96ecb9fedd7fc8d7&code=975D
