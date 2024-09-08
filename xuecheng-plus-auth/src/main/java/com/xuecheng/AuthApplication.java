@@ -23,4 +23,10 @@ public class AuthApplication {
         SpringApplication.run(AuthApplication.class, args);
     }
 
+
+    //和第三方接口远程调用的话，需要RestTemplate
+    @Bean
+    RestTemplate restTemplate(){
+        return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
+    }
 }
