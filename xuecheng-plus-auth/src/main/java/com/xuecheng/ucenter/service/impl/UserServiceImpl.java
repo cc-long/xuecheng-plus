@@ -2,9 +2,11 @@ package com.xuecheng.ucenter.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xuecheng.ucenter.mapper.XcMenuMapper;
 import com.xuecheng.ucenter.mapper.XcUserMapper;
 import com.xuecheng.ucenter.model.dto.AuthParamsDto;
 import com.xuecheng.ucenter.model.dto.XcUserExt;
+import com.xuecheng.ucenter.model.po.XcMenu;
 import com.xuecheng.ucenter.model.po.XcUser;
 import com.xuecheng.ucenter.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author CCL
@@ -28,6 +33,9 @@ public class UserServiceImpl implements UserDetailsService {
 
     @Autowired
     private XcUserMapper xcUserMapper;
+
+    @Autowired
+    private XcMenuMapper xcMenuMapper;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -64,8 +72,16 @@ public class UserServiceImpl implements UserDetailsService {
      */
     public UserDetails getUserPrincipal(XcUserExt xcUserExt){
         String password = xcUserExt.getPassword();
-        //权限
-        String[] authorities = {"test"};
+        //从数据库查询权限
+        String[] authorities = {};
+        List<XcMenu> xcMenus = xcMenuMapper.selectPermissionByUserId(xcUserExt.getId());
+        if (xcMenus.size() > 0){
+            List<String> permissions = xcMenus.stream().map(menus -> menus.getCode()).collect(Collectors.toList());
+            //将permissions转成数组
+            authorities = permissions.toArray(new String[0]);
+        }
+
+
         xcUserExt.setPassword(null);
         //将用户信息转json
         String userJson = JSON.toJSONString(xcUserExt);

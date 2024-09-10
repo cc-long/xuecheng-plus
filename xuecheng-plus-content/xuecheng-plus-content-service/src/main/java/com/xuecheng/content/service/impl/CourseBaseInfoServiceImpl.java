@@ -46,10 +46,12 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     CourseCategoryMapper courseCategoryMapper;
 
     @Override
-    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto courseParamsDto) {
+    public PageResult<CourseBase> queryCourseBaseList(Long companyId, PageParams pageParams, QueryCourseParamsDto courseParamsDto) {
 
         //拼装查询条件
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
+        //根据机构id查询
+        queryWrapper.eq(CourseBase::getCompanyId, companyId);
         //根据名称模糊查询,在sql中拼接 course_base.name like '%值%'
         queryWrapper.like(StringUtils.isNotEmpty(courseParamsDto.getCourseName()),CourseBase::getName,courseParamsDto.getCourseName());
         //根据课程审核状态查询 course_base.audit_status = ?
