@@ -234,7 +234,7 @@ public class CoursePublishServiceImpl implements CoursePublishService {
             //将file转成MultipartFile
             MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(file);
 
-            String upload = mediaServiceClient.upload(multipartFile, "course/121.html");
+            String upload = mediaServiceClient.upload(multipartFile, "course/"+ courseId +".html");
             if (upload == null){
                 log.debug("无可用媒资服务，走降级逻辑得到上传结果为null，课程id：{}",courseId);
                 XueChengPlusException.cast("上传静态文件过程中存在异常");
@@ -243,6 +243,12 @@ public class CoursePublishServiceImpl implements CoursePublishService {
             ex.printStackTrace();
             XueChengPlusException.cast("上传静态文件过程中存在异常");
         }
+    }
+
+    @Override
+    public CoursePublish getCoursePublish(Long courseId) {
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        return coursePublish;
     }
 
     /**
