@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: orders-service
+  cloud:
+    nacos:
+      server-addr: 192.168.61.139:8848
+      discovery:
+        namespace: xuecheng
+        group: xuecheng-plus
+      config:
+        namespace: xuecheng
+        group: xuecheng-plus
+        file-extension: yaml
+        refresh-enabled: true
+        shared-configs:
+          - data-id: logging-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+
+  #profiles默认为dev
+  profiles:
+    active: dev
+
+
+
