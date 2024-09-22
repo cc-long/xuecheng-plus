@@ -83,7 +83,6 @@ public class MyCourseTableServiceImpl implements MyCourseTableService {
         XcCourseTables xcCourseTables = getXcCourseTables(userId, courseId);
         if (xcCourseTables == null){
             //{"code":"702002","desc":"没有选课或选课后没有支付"}
-            BeanUtils.copyProperties(xcCourseTables,xcCourseTablesDto);
             xcCourseTablesDto.setLearnStatus("702002");
             return xcCourseTablesDto;
         }
