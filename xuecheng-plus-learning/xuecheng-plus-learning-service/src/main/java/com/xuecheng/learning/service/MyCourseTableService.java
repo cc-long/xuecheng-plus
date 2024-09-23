@@ -27,4 +27,11 @@ public interface MyCourseTableService {
      * [{"code":"702001","desc":"正常学习"},{"code":"702002","desc":"没有选课或选课后没有支付"},{"code":"702003","desc":"已过期需要申请续期或重新支付"}]
      */
     public XcCourseTablesDto getLearningStatus(String userId,Long courseId);
+
+    /**
+     *保存选课成功状态
+     * @param chooseCourseId 选课表id
+     * @return
+     */
+    public boolean saveChooseCourseSuccess(String chooseCourseId);
 }
