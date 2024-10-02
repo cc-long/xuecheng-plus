@@ -1,8 +1,17 @@
-
+server:
+  servlet:
+    context-path: /system
+  port: 63110
 #微服务配置
 spring:
   application:
     name: system-api
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.61.139:3306/xc_system?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: 123
+
   # 日志文件配置路径
   cloud:
     nacos:
