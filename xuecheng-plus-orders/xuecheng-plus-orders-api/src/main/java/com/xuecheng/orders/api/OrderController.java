@@ -54,6 +54,9 @@ public class OrderController {
     @Value("${pay.alipay.ALIPAY_PUBLIC_KEY}")
     String ALIPAY_PUBLIC_KEY;
 
+    @Value("&{pay.backnotifyurl}")
+    String BACK_NOTIFY_URL;
+
     @Autowired
     private OrderService orderService;
 
@@ -86,7 +89,7 @@ public class OrderController {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, APP_ID, APP_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
         AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
 //        alipayRequest.setReturnUrl("http://domain.com/CallBack/return_url.jsp");
-        alipayRequest.setNotifyUrl("http://ghr372.natappfree.cc/orders/paynotify");//在公共参数中设置回跳和通知地址
+        alipayRequest.setNotifyUrl(BACK_NOTIFY_URL + "/orders/paynotify");//在公共参数中设置回跳和通知地址
 
         //构造业务参数
         JSONObject bizContent = new JSONObject();
